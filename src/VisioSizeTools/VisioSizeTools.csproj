@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>VisioSizeTools</RootNamespace>
+    <AssemblyName>VisioSizeTools</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <ComVisible>false</ComVisible>
+    <!-- CI overrides this with -p:Version=x.y.z -->
+    <Version>1.0.0</Version>
+    <Product>Visio Size Tools</Product>
+    <Company>macmedia.tv</Company>
+    <Copyright>Copyright © macmedia.tv</Copyright>
+
+    <!-- Office 2013+ (v15) primary interop assemblies, vendored in lib\ so the build works on machines without
+         Office (e.g. CI). Interop types are embedded, so nothing from lib\ ships with the add-in. -->
+    <VisioInteropPath Condition="'$(VisioInteropPath)' == ''">$(MSBuildThisFileDirectory)..\..\lib\Microsoft.Office.Interop.Visio.dll</VisioInteropPath>
+    <OfficeInteropPath Condition="'$(OfficeInteropPath)' == ''">$(MSBuildThisFileDirectory)..\..\lib\OFFICE.DLL</OfficeInteropPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="Microsoft.Office.Interop.Visio">
+      <HintPath>$(VisioInteropPath)</HintPath>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="office">
+      <HintPath>$(OfficeInteropPath)</HintPath>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Lets the SDK build net48 without the .NET Framework targeting pack installed. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Ribbon.xml" LogicalName="VisioSizeTools.Ribbon.xml" />
+  </ItemGroup>
+
+</Project>

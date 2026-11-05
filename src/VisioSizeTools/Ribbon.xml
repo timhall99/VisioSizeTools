@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="OnRibbonLoad">
+  <ribbon>
+    <tabs>
+      <tab idMso="TabHome">
+        <!-- Office does not allow controls to be injected into a built-in group, so the Size
+             menu lives in its own group placed immediately after Home > Arrange. -->
+        <group id="vstSizeGroup" label="Size" insertAfterMso="GroupArrange">
+          <menu id="vstSizeMenu"
+                label="Size"
+                size="large"
+                itemSize="normal"
+                getImage="GetImage"
+                getEnabled="GetEnabled"
+                screentip="Size"
+                supertip="Make the selected shapes the same height, width, or size. Select two or more shapes to enable. Hold Shift when choosing an option to also align the shapes to the first one selected.">
+
+            <menuSeparator id="vstSepHeight" title="Height" />
+            <button id="vstSizeTallest" label="Size to Tallest"
+                    screentip="Size to Tallest" supertip="Set every selected shape to the height of the tallest one.&#13;&#13;Hold Shift to also align their bottoms to the first selected shape."
+                    getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
+            <button id="vstSizeShortest" label="Size to Shortest"
+                    screentip="Size to Shortest" supertip="Set every selected shape to the height of the shortest one.&#13;&#13;Hold Shift to also align their bottoms to the first selected shape."
+                    getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
+
+            <menuSeparator id="vstSepWidth" title="Width" />
+            <button id="vstSizeWidest" label="Size to Widest"
+                    screentip="Size to Widest" supertip="Set every selected shape to the width of the widest one.&#13;&#13;Hold Shift to also align their left edges to the first selected shape."
+                    getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
+            <button id="vstSizeNarrowest" label="Size to Narrowest"
+                    screentip="Size to Narrowest" supertip="Set every selected shape to the width of the narrowest one.&#13;&#13;Hold Shift to also align their left edges to the first selected shape."
+                    getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
+
+            <menuSeparator id="vstSepBoth" title="Both" />
+            <button id="vstSizeBothLarger" label="Size Both Larger"
+                    screentip="Size Both Larger" supertip="Set every selected shape to the largest width and the largest height in the selection.&#13;&#13;Hold Shift to also align their bottom-left corners to the first selected shape."
+                    getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
+            <button id="vstSizeBothSmaller" label="Size Both Smaller"
+                    screentip="Size Both Smaller" supertip="Set every selected shape to the smallest width and the smallest height in the selection.&#13;&#13;Hold Shift to also align their bottom-left corners to the first selected shape."
+                    getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
+          </menu>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
