@@ -1,0 +1,130 @@
+name: Release
+
+# Cut a release with `make version` (tags locally), then `git push origin vX.Y.Z`.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.x"
+
+      - name: Install make and Inno Setup (if missing)
+        run: |
+          command -v make >/dev/null || choco install make -y --no-progress
+          [ -f "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" ] || choco install innosetup -y --no-progress
+
+      - name: Build installer
+        run: make installer VERSION=${{ github.ref_name }}
+
+      - name: Package artifacts
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp artifacts/*.exe dist/
+          (cd dist && sha256sum * > SHA256SUMS.txt)
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          set -euo pipefail
+
+          TAG="${{ github.ref_name }}"
+          REPO_URL="https://github.com/${{ github.repository }}"
+          RELEASE_NAME="VisioSizeTools/${TAG}"
+
+          PREVIOUS_TAG="$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || true)"
+
+          THIS_RELEASE_RAW="$(mktemp)"
+          THIS_RELEASE_FORMATTED="$(mktemp)"
+          RECENT_CHANGES_RAW="$(mktemp)"
+          RECENT_CHANGES_FORMATTED="$(mktemp)"
+          RELEASE_BODY="$(mktemp)"
+
+          format_commit_list() {
+            local source_file="$1"
+            local output_file="$2"
+
+            while IFS= read -r line || [ -n "$line" ]; do
+              [ -z "$line" ] && continue
+
+              hash="$(printf '%s\n' "$line" | grep -oE '^[0-9a-f]{7,40}' | head -1 || true)"
+              if [ -n "${hash}" ]; then
+                rest="$(printf '%s\n' "$line" | sed -E 's/^[0-9a-f]{7,40}[[:space:]]*//')"
+                printf -- '- [`%s`](%s/commit/%s) %s\n' "${hash}" "${REPO_URL}" "${hash}" "${rest}" >> "${output_file}"
+              else
+                printf -- '- %s\n' "$line" >> "${output_file}"
+              fi
+            done < "${source_file}"
+          }
+
+          if [ -n "${PREVIOUS_TAG}" ]; then
+            git log --oneline "${PREVIOUS_TAG}..${TAG}" > "${THIS_RELEASE_RAW}"
+          else
+            git log --oneline "${TAG}" > "${THIS_RELEASE_RAW}"
+          fi
+
+          git log --oneline -n 35 "${TAG}" > "${RECENT_CHANGES_RAW}"
+
+          if [ -s "${THIS_RELEASE_RAW}" ]; then
+            format_commit_list "${THIS_RELEASE_RAW}" "${THIS_RELEASE_FORMATTED}"
+          fi
+          if [ -s "${RECENT_CHANGES_RAW}" ]; then
+            format_commit_list "${RECENT_CHANGES_RAW}" "${RECENT_CHANGES_FORMATTED}"
+          fi
+
+          {
+            echo "Automated release for ${RELEASE_NAME}."
+            echo ""
+            echo "Run \`VisioSizeTools_Setup_*.exe\` (per-user, no admin rights) and restart Visio."
+            echo "Works with 32- and 64-bit Visio 2013 or later; needs .NET Framework 4.8."
+            echo ""
+            echo "<details open><summary><h3>This Release</h3></summary>"
+            echo ""
+            if [ -s "${THIS_RELEASE_FORMATTED}" ]; then
+              cat "${THIS_RELEASE_FORMATTED}"
+            else
+              echo "- Initial release or no commits found since the previous tag."
+            fi
+            echo ""
+            echo "</details>"
+            echo ""
+            echo "<details><summary><h3>Recent Changes (35)</h3></summary>"
+            echo ""
+            if [ -s "${RECENT_CHANGES_FORMATTED}" ]; then
+              cat "${RECENT_CHANGES_FORMATTED}"
+            else
+              echo "- No recent history available."
+            fi
+            echo ""
+            echo "</details>"
+          } > "${RELEASE_BODY}"
+
+          echo "notes_file=${RELEASE_BODY}" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release create "${{ github.ref_name }}" \
+            --title "${{ github.ref_name }}" \
+            --notes-file "${{ steps.notes.outputs.notes_file }}" \
+            dist/*

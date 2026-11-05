@@ -1,0 +1,5 @@
+# make chokes on CRLF; keep the Makefile LF even with core.autocrlf=true.
+Makefile  text eol=lf
+*.png     binary
+*.dll     binary
+*.DLL     binary

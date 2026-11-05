@@ -9,8 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisioSizeTools", "src\Visio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B3F1C6A2-5D4E-4C7B-8E9A-1F2D3C4B5A60}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build-and-release.yaml = .github\workflows\build-and-release.yaml
+		.github\workflows\release.yml = .github\workflows\release.yml
 		installer\VisioSizeTools.iss = installer\VisioSizeTools.iss
+		Makefile = Makefile
+		README.md = README.md
+		scripts\Capture-Screenshots.ps1 = scripts\Capture-Screenshots.ps1
 		scripts\Register.ps1 = scripts\Register.ps1
 		scripts\Unregister.ps1 = scripts\Unregister.ps1
 	EndProjectSection
