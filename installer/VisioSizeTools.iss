@@ -3,7 +3,9 @@
 ; The defaults below apply when compiling by hand after:  dotnet build VisioSizeTools.sln -c Release
 ;
 ; Installs per user (no admin rights) and registers the add-in under HKCU, exactly like scripts\Register.ps1.
-; HKCU\Software\Classes is shared by 32- and 64-bit Office, so one set of keys works for either bitness.
+; HKCU\Software\Classes\CLSID is redirected by WOW64: 32-bit Office reads Classes\Wow6432Node\CLSID and 64-bit Office reads
+; Classes\CLSID. Setup itself is a 32-bit process, so plain HKCU would reach only the 32-bit view. The CLSID keys are therefore
+; written to both views explicitly. The ProgId and Visio Addins keys are shared, so one copy of those is enough.
 
 #ifndef SourceDir
   #define SourceDir "..\src\VisioSizeTools\bin\Release\net48"
@@ -52,15 +54,27 @@ Source: "{#SourceDir}\VisioSizeTools.dll"; DestDir: "{app}"; Flags: ignoreversio
 
 [Registry]
 ; --- COM class registration (what regasm /codebase would write, but per user) ---
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}"; ValueType: string; ValueData: "{#ClassName}"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\ProgId"; ValueType: string; ValueData: "{#ProgId}"
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\Implemented Categories\{{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}"
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueData: "mscoree.dll"
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Both"
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "Class"; ValueData: "{#ClassName}"
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "Assembly"; ValueData: "{#AsmFullName}"
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "RuntimeVersion"; ValueData: "v4.0.30319"
-Root: HKCU; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "CodeBase"; ValueData: "{code:GetCodeBase}"
+; 32-bit view (32-bit Office)
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}"; ValueType: string; ValueData: "{#ClassName}"; Flags: uninsdeletekey
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\ProgId"; ValueType: string; ValueData: "{#ProgId}"
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\Implemented Categories\{{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}"
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueData: "mscoree.dll"
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Both"
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "Class"; ValueData: "{#ClassName}"
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "Assembly"; ValueData: "{#AsmFullName}"
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "RuntimeVersion"; ValueData: "v4.0.30319"
+Root: HKCU32; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "CodeBase"; ValueData: "{code:GetCodeBase}"
+; 64-bit view (64-bit Office)
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}"; ValueType: string; ValueData: "{#ClassName}"; Flags: uninsdeletekey; Check: IsWin64
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\ProgId"; ValueType: string; ValueData: "{#ProgId}"; Check: IsWin64
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\Implemented Categories\{{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}"; Check: IsWin64
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueData: "mscoree.dll"; Check: IsWin64
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Both"; Check: IsWin64
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "Class"; ValueData: "{#ClassName}"; Check: IsWin64
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "Assembly"; ValueData: "{#AsmFullName}"; Check: IsWin64
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "RuntimeVersion"; ValueData: "v4.0.30319"; Check: IsWin64
+Root: HKCU64; Subkey: "{#ClassesKey}\CLSID\{#ClsId}\InprocServer32"; ValueType: string; ValueName: "CodeBase"; ValueData: "{code:GetCodeBase}"; Check: IsWin64
+; ProgId is shared between the views
 Root: HKCU; Subkey: "{#ClassesKey}\{#ProgId}"; ValueType: string; ValueData: "{#ClassName}"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "{#ClassesKey}\{#ProgId}\CLSID"; ValueType: string; ValueData: "{#ClsId}"
 
