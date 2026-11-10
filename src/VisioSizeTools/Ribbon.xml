@@ -22,6 +22,9 @@
             <button id="vstSizeShortest" label="Size to Shortest"
                     screentip="Size to Shortest" supertip="Set every selected shape to the height of the shortest one.&#13;&#13;Hold Shift to also align their bottoms to the first selected shape."
                     getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
+            <button id="vstSizeFirstHeight" label="Size to First: Height"
+                    screentip="Size to First: Height" supertip="Set every selected shape to the height of the first shape you selected.&#13;&#13;Hold Shift to also align their bottoms to the first selected shape."
+                    getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
 
             <menuSeparator id="vstSepWidth" title="Width" />
             <button id="vstSizeWidest" label="Size to Widest"
@@ -29,6 +32,9 @@
                     getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
             <button id="vstSizeNarrowest" label="Size to Narrowest"
                     screentip="Size to Narrowest" supertip="Set every selected shape to the width of the narrowest one.&#13;&#13;Hold Shift to also align their left edges to the first selected shape."
+                    getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
+            <button id="vstSizeFirstWidth" label="Size to First: Width"
+                    screentip="Size to First: Width" supertip="Set every selected shape to the width of the first shape you selected.&#13;&#13;Hold Shift to also align their left edges to the first selected shape."
                     getImage="GetImage" getEnabled="GetEnabled" onAction="OnAction" />
 
             <menuSeparator id="vstSepBoth" title="Both" />
