@@ -39,6 +39,8 @@ namespace VisioSizeTools
                     case "vstSizeNarrowest": DrawNarrowest(g); break;
                     case "vstSizeBothLarger": DrawBothLarger(g); break;
                     case "vstSizeBothSmaller": DrawBothSmaller(g); break;
+                    case "vstSizeFirstHeight": DrawFirstHeight(g); break;
+                    case "vstSizeFirstWidth": DrawFirstWidth(g); break;
                     default: DrawMenu(g); break;
                 }
             }
@@ -104,6 +106,23 @@ namespace VisioSizeTools
                 g.DrawLine(p, 8.5f, 1, 8.5f, 9);
                 g.DrawLine(p, 1, 8.5f, 9, 8.5f);
             }
+        }
+
+        // The reference is the first shape, with one shape larger and one smaller than it.
+        private static void DrawFirstHeight(Graphics g)
+        {
+            Solid(g, 1, 5, 4, 10);
+            Light(g, 6, 1, 4, 14);
+            Light(g, 11, 10, 4, 5);
+            HLine(g, 0, 16, 5);
+        }
+
+        private static void DrawFirstWidth(Graphics g)
+        {
+            Solid(g, 1, 1, 10, 4);
+            Light(g, 1, 6, 14, 4);
+            Light(g, 1, 11, 5, 4);
+            VLine(g, 11, 0, 16);
         }
 
         // ---- 32x32 menu button --------------------------------------------------------

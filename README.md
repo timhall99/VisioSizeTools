@@ -29,6 +29,9 @@ clicking the add-in's own menu items (see [Regenerating the screenshots](#regene
 | **Size Both Larger**: the largest width *and* the largest height | ![Size Both Larger](docs/images/both-larger.png) |
 | **Size Both Smaller**: the smallest width *and* the smallest height | ![Size Both Smaller](docs/images/both-smaller.png) |
 
+**Size to First: Height** and **Size to First: Width** set every shape to the height or width of the
+first shape you selected, whether that makes the others larger or smaller.
+
 Shapes resize about their centre (pin), as they do when you type a new size into Visio's Size &amp; Position window.
 
 ### Hold Shift to also align

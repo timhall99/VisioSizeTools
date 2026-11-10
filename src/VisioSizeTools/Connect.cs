@@ -24,6 +24,7 @@ namespace VisioSizeTools
         private static readonly string[] ControlIds =
         {
             "vstSizeMenu", "vstSizeTallest", "vstSizeShortest", "vstSizeWidest", "vstSizeNarrowest", "vstSizeBothLarger", "vstSizeBothSmaller",
+            "vstSizeFirstHeight", "vstSizeFirstWidth",
         };
 
         private Visio.Application _app;
@@ -118,6 +119,8 @@ namespace VisioSizeTools
                 case "vstSizeNarrowest": mode = SizeMode.Narrowest; break;
                 case "vstSizeBothLarger": mode = SizeMode.BothLarger; break;
                 case "vstSizeBothSmaller": mode = SizeMode.BothSmaller; break;
+                case "vstSizeFirstHeight": mode = SizeMode.FirstHeight; break;
+                case "vstSizeFirstWidth": mode = SizeMode.FirstWidth; break;
                 default: return;
             }
 

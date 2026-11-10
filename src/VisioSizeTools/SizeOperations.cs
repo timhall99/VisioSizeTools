@@ -13,6 +13,8 @@ namespace VisioSizeTools
         Narrowest,
         BothLarger,
         BothSmaller,
+        FirstHeight,
+        FirstWidth,
     }
 
     internal static class SizeOperations
@@ -102,6 +104,12 @@ namespace VisioSizeTools
                 case SizeMode.BothSmaller:
                     targetWidth = sizes.Min(s => s.Width);
                     targetHeight = sizes.Min(s => s.Height);
+                    break;
+                case SizeMode.FirstHeight:
+                    targetHeight = sizes[0].Height;
+                    break;
+                case SizeMode.FirstWidth:
+                    targetWidth = sizes[0].Width;
                     break;
             }
 
@@ -212,6 +220,8 @@ namespace VisioSizeTools
                 case SizeMode.Narrowest: return "Size to Narrowest";
                 case SizeMode.BothLarger: return "Size Both Larger";
                 case SizeMode.BothSmaller: return "Size Both Smaller";
+                case SizeMode.FirstHeight: return "Size to First: Height";
+                case SizeMode.FirstWidth: return "Size to First: Width";
                 default: return "Size";
             }
         }
